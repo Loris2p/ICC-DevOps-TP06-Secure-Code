@@ -81,9 +81,10 @@ def health():
 @app.post("/login")
 def login(request: Request, data: dict = Body(...)):
     username, password = data["username"], data["password"]
-    log.info(f"login attempt user={username} password={password}")
-    sql = f"SELECT * FROM users WHERE username='{username}' AND password='{md5(password)}'"
-    row = db().execute(sql).fetchone()
+    # log.info(f"login attempt user={username} password={password}")
+    sql = f"SELECT id, username FROM users WHERE username=? AND password=?"
+
+    row = db().execute(sql,(username,md5(password))).fetchone()
     if not row:
         return JSONResponse({"error": "bad credentials"}, status_code=401)
     request.session["user_id"] = row["id"]
@@ -93,8 +94,8 @@ def login(request: Request, data: dict = Body(...)):
 
 @app.get("/search")
 def search(q: str = ""):
-    sql = f"SELECT id, name, price FROM products WHERE name LIKE '%{q}%'"
-    return [dict(r) for r in db().execute(sql).fetchall()]
+    sql = f"SELECT id, name, price FROM products WHERE name LIKE ?"
+    return [dict(r) for r in db().execute(sql,(f"%{q}%",)).fetchall()]
 
 
 @app.get("/ping")
