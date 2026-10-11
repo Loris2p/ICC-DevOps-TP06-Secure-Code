@@ -18,6 +18,7 @@ import uvicorn
 import yaml
 from fastapi import Body, FastAPI, Request
 from fastapi.responses import FileResponse, HTMLResponse, JSONResponse, PlainTextResponse
+from ipaddress import IPv4Address
 from starlette.middleware.sessions import SessionMiddleware
 
 SECRET_KEY = "super-secret-key-123"
@@ -99,10 +100,13 @@ def search(q: str = ""):
 
 
 @app.get("/ping")
-def ping(host: str = "127.0.0.1"):
-    out = subprocess.run(f"ping -c 1 {host}", shell=True, capture_output=True, text=True)
-    return PlainTextResponse(out.stdout + out.stderr)
-
+def ping(host: IPv4Address = IPv4Address("127.0.0.1")):
+    com  =["ping", "-c", "1", str(host)]
+    try:
+        out = subprocess.run(com, capture_output=True, text=True, timeout=5)
+        return PlainTextResponse(out.stdout + out.stderr)
+    except subprocess.TimeoutExpired:
+        return PlainTextResponse("Timeout expired", status_code=504)
 
 @app.get("/hello")
 def hello(name: str = ""):
