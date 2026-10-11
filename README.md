@@ -21,8 +21,8 @@ Les tests utilisent `/ping` (Linux/macOS/WSL recommandé). Initialisez un dépô
 ## Travail demandé
 
 ### Partie 1 – Injections (5 pts)
-1. `/login` et `/search` : requêtes paramétrées.
-2. `/ping` : plus de `shell=True`, validation de l'adresse IP (`ipaddress` ou type pydantic `IPvAnyAddress`), timeout.
+~~1. `/login` et `/search` : requêtes paramétrées.~~
+~~2. `/ping` : plus de `shell=True`, validation de l'adresse IP (`ipaddress` ou type pydantic `IPvAnyAddress`), timeout.~~
 3. `/calc` : supprimer `eval` (ex. `ast.literal_eval` ou parser arithmétique à liste blanche), répondre 400/422 si invalide.
 4. `/import-yaml` : `yaml.safe_load`. `/import-profile` : remplacer pickle par du JSON validé par un modèle pydantic.
 
@@ -50,10 +50,10 @@ Les tests utilisent `/ping` (Linux/macOS/WSL recommandé). Initialisez un dépô
 18. Dockerfile : image de base épinglée (`python:3.12-slim`), utilisateur non-root (`USER`), `pip install --require-hashes --no-cache-dir`, `.dockerignore`, commande `uvicorn app:app --host 0.0.0.0 --port 5000` sans `--reload`.
 
 ### Partie 6 – CI/CD de sécurité (3 pts)
-19. Créer `.github/workflows/security.yml` qui exécute au minimum **Bandit, pip-audit, gitleaks et Trivy**, bloque sur sévérité HIGH/CRITICAL, tourne sur push, pull request **et** en cron quotidien.
-20. `permissions: contents: read`, actions épinglées par SHA de commit (les tags peuvent être réécrits : cf. l'incident Trivy/LiteLLM de mars 2026).
-21. Activer Dependabot (`.github/dependabot.yml`, écosystèmes `pip` et `docker`).
-22. Ajouter un job DAST (OWASP ZAP baseline sur `/openapi.json`) ou un job SBOM (CycloneDX) : au choix.
+~~19. Créer `.github/workflows/security.yml` qui exécute au minimum **Bandit, pip-audit, gitleaks et Trivy**, bloque sur sévérité HIGH/CRITICAL, tourne sur push, pull request **et** en cron quotidien.~~
+~~20. `permissions: contents: read`, actions épinglées par SHA de commit (les tags peuvent être réécrits : cf. l'incident Trivy/LiteLLM de mars 2026).~~
+~~21. Activer Dependabot (`.github/dependabot.yml`, écosystèmes `pip` et `docker`).~~
+~~22. Ajouter un job DAST (OWASP ZAP baseline sur `/openapi.json`) ou un job SBOM (CycloneDX) : au choix.~~
 
 ### Partie 7 – Scénario d'incident (rapport, `INCIDENT.md`)
 Une version de `requests` utilisée par l'application est annoncée comme compromise. Décrivez, avec les commandes, votre réaction : détection, évaluation d'exposition, confinement, correction, rotation des secrets, retour d'expérience. Ce rapport est évalué à l'oral.
