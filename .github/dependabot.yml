@@ -1,0 +1,11 @@
+version: 2
+updates:
+  - package-ecosystem: "pip"
+    directory: "/app"
+    schedule:
+      interval: "daily"
+
+  - package-ecosystem: "docker"
+    directory: "/app"
+    schedule:
+      interval: "daily"
