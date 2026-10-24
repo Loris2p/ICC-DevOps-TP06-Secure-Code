@@ -22,7 +22,7 @@ from fastapi.responses import FileResponse, HTMLResponse, JSONResponse, PlainTex
 from ipaddress import IPv4Address
 from starlette.middleware.sessions import SessionMiddleware
 import ast
-
+from pydantic import BaseModel
 SECRET_KEY = "super-secret-key-123"
 DB_PATH = os.environ.get("DB_PATH", "shop.db")
 UPLOAD_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "uploads")
@@ -146,14 +146,18 @@ def calc(data: dict = Body(...)):
 
 @app.post("/import-yaml")
 async def import_yaml(request: Request):
-    cfg = yaml.load(await request.body(), Loader=yaml.Loader)
-    return {"keys": list(cfg.keys()) if isinstance(cfg, dict) else str(type(cfg))}
+    try:
+        cfg = yaml.safe_load(await request.body())
+        return {"keys": list(cfg.keys()) if isinstance(cfg, dict) else str(type(cfg))}
+    except yaml.YAMLError as exc:
+        raise HTTPException(status_code=400, detail=str(exc))
 
-
+class Profile (BaseModel) :
+    name : str
+    bio : str
 @app.post("/import-profile")
-async def import_profile(request: Request):
-    profile = pickle.loads(base64.b64decode(await request.body()))
-    return {"profile": str(profile)}
+async def import_profile(profile: Profile):
+    return {"profile": profile.dict()}
 
 
 @app.get("/fetch")

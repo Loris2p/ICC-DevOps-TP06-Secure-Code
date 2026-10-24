@@ -23,8 +23,8 @@ Les tests utilisent `/ping` (Linux/macOS/WSL recommandé). Initialisez un dépô
 ### Partie 1 – Injections (5 pts)
 ~~1. `/login` et `/search` : requêtes paramétrées.~~
 ~~2. `/ping` : plus de `shell=True`, validation de l'adresse IP (`ipaddress` ou type pydantic `IPvAnyAddress`), timeout.~~
-3. `/calc` : supprimer `eval` (ex. `ast.literal_eval` ou parser arithmétique à liste blanche), répondre 400/422 si invalide.
-4. `/import-yaml` : `yaml.safe_load`. `/import-profile` : remplacer pickle par du JSON validé par un modèle pydantic.
+~~3. `/calc` : supprimer `eval` (ex. `ast.literal_eval` ou parser arithmétique à liste blanche), répondre 400/422 si invalide.~~
+~~4. `/import-yaml` : `yaml.safe_load`. `/import-profile` : remplacer pickle par du JSON validé par un modèle pydantic.~~
 
 ### Partie 2 – Fichiers, XSS, SSRF (3 pts)
 5. `/files/{name}` : confiner au dossier `uploads/` (`resolve()` + `is_relative_to`).
