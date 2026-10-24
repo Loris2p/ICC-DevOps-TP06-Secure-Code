@@ -5,6 +5,7 @@ Documentation interactive : http://localhost:5000/docs
 """
 import base64
 import hashlib
+import html
 import logging
 import os
 import random
@@ -127,7 +128,7 @@ def ping(host: IPv4Address = IPv4Address("127.0.0.1")):
 
 @app.get("/hello")
 def hello(name: str = ""):
-    return HTMLResponse(f"<h1>Bonjour {name}</h1>")
+    return HTMLResponse(html.escape(f"<h1>Bonjour {name}</h1>"))
 
 
 @app.get("/files/{name:path}")
