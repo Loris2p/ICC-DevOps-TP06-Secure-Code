@@ -27,7 +27,7 @@ Les tests utilisent `/ping` (Linux/macOS/WSL recommandé). Initialisez un dépô
 ~~4. `/import-yaml` : `yaml.safe_load`. `/import-profile` : remplacer pickle par du JSON validé par un modèle pydantic.~~
 
 ### Partie 2 – Fichiers, XSS, SSRF (3 pts)
-5. `/files/{name}` : confiner au dossier `uploads/` (`resolve()` + `is_relative_to`).
+~~5. `/files/{name}` : confiner au dossier `uploads/` (`resolve()` + `is_relative_to`).~~
 6. `/hello` : utiliser `Jinja2Templates` (échappement automatique) ou `html.escape`.
 7. `/fetch` : liste blanche d'hôtes, https uniquement, `timeout`, `verify=True`, pas de redirections.
 

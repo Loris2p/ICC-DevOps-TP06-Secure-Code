@@ -7,7 +7,6 @@ import base64
 import hashlib
 import logging
 import os
-import pickle
 import random
 import sqlite3
 import subprocess
@@ -23,6 +22,7 @@ from ipaddress import IPv4Address
 from starlette.middleware.sessions import SessionMiddleware
 import ast
 from pydantic import BaseModel
+from pathlib import Path
 SECRET_KEY = "super-secret-key-123"
 DB_PATH = os.environ.get("DB_PATH", "shop.db")
 UPLOAD_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "uploads")
@@ -132,6 +132,14 @@ def hello(name: str = ""):
 
 @app.get("/files/{name:path}")
 def get_file(name: str):
+    base_path=Path(UPLOAD_DIR).resolve()
+    target_path=(base_path/name).resolve()
+    is_relative_to=target_path.is_relative_to(base_path)
+    if not is_relative_to:
+        raise HTTPException(status_code=403, detail="Not a relative path")
+    if not target_path.is_file():
+        raise HTTPException(status_code=404, detail="Not found")
+
     return FileResponse(os.path.join(UPLOAD_DIR, name))
 
 
