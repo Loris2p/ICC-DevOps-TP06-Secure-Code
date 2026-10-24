@@ -13,6 +13,7 @@ import sqlite3
 import subprocess
 import traceback
 
+from fastapi import HTTPException
 import requests
 import uvicorn
 import yaml
@@ -20,6 +21,7 @@ from fastapi import Body, FastAPI, Request
 from fastapi.responses import FileResponse, HTMLResponse, JSONResponse, PlainTextResponse
 from ipaddress import IPv4Address
 from starlette.middleware.sessions import SessionMiddleware
+import ast
 
 SECRET_KEY = "super-secret-key-123"
 DB_PATH = os.environ.get("DB_PATH", "shop.db")
@@ -50,11 +52,26 @@ def init_db():
         DROP TABLE IF EXISTS users;
         DROP TABLE IF EXISTS products;
         DROP TABLE IF EXISTS invoices;
-        CREATE TABLE users (id INTEGER PRIMARY KEY, username TEXT UNIQUE,
-                            password TEXT, is_admin INTEGER DEFAULT 0);
-        CREATE TABLE products (id INTEGER PRIMARY KEY, name TEXT, price REAL);
-        CREATE TABLE invoices (id INTEGER PRIMARY KEY, owner_id INTEGER,
-                               label TEXT, amount REAL);
+        CREATE TABLE users
+        (
+            id       INTEGER PRIMARY KEY,
+            username TEXT UNIQUE,
+            password TEXT,
+            is_admin INTEGER DEFAULT 0
+        );
+        CREATE TABLE products
+        (
+            id    INTEGER PRIMARY KEY,
+            name  TEXT,
+            price REAL
+        );
+        CREATE TABLE invoices
+        (
+            id       INTEGER PRIMARY KEY,
+            owner_id INTEGER,
+            label    TEXT,
+            amount   REAL
+        );
         """
     )
     conn.execute("INSERT INTO users (username, password, is_admin) VALUES (?, ?, 1)",
@@ -85,23 +102,23 @@ def login(request: Request, data: dict = Body(...)):
     # log.info(f"login attempt user={username} password={password}")
     sql = f"SELECT id, username FROM users WHERE username=? AND password=?"
 
-    row = db().execute(sql,(username,md5(password))).fetchone()
+    row = db().execute(sql, (username, md5(password))).fetchone()
     if not row:
         return JSONResponse({"error": "bad credentials"}, status_code=401)
     request.session["user_id"] = row["id"]
-    request.session["token"] = str(random.randint(0, 10**6))
+    request.session["token"] = str(random.randint(0, 10 ** 6))
     return {"status": "logged in", "user": row["username"]}
 
 
 @app.get("/search")
 def search(q: str = ""):
     sql = f"SELECT id, name, price FROM products WHERE name LIKE ?"
-    return [dict(r) for r in db().execute(sql,(f"%{q}%",)).fetchall()]
+    return [dict(r) for r in db().execute(sql, (f"%{q}%",)).fetchall()]
 
 
 @app.get("/ping")
 def ping(host: IPv4Address = IPv4Address("127.0.0.1")):
-    com  =["ping", "-c", "1", str(host)]
+    com = ["ping", "-c", "1", str(host)]
     try:
         out = subprocess.run(com, capture_output=True, text=True, timeout=5)
         return PlainTextResponse(out.stdout + out.stderr)
@@ -120,7 +137,11 @@ def get_file(name: str):
 
 @app.post("/calc")
 def calc(data: dict = Body(...)):
-    return {"result": str(eval(data["expr"]))}
+    try:
+        calc_result = ast.literal_eval(data.get("expr", ""))
+        return {"result":str(calc_result)}
+    except (ValueError, SyntaxError):
+        raise HTTPException(status_code=400, detail='Invalid expression')
 
 
 @app.post("/import-yaml")
