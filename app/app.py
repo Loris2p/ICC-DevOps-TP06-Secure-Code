@@ -159,7 +159,7 @@ def health():
 def login(request: Request, data: LoginRequest):
     username, password = data.username, data.password
     log.info(f"login attempt user={username}")
-    sql = f"SELECT id, username, password FROM users WHERE username = ?"
+    sql = "SELECT id, username, password FROM users WHERE username = ?"
     row = db().execute(sql, (username,)).fetchone()
     if not row:
         return JSONResponse({"error": "bad credentials"}, status_code=401)
@@ -175,7 +175,7 @@ def login(request: Request, data: LoginRequest):
 
 @app.get("/search")
 def search(q: str = ""):
-    sql = f"SELECT id, name, price FROM products WHERE name LIKE ?"
+    sql = "SELECT id, name, price FROM products WHERE name LIKE ?"
     return [dict(r) for r in db().execute(sql, (f"%{q}%",)).fetchall()]
 
 
