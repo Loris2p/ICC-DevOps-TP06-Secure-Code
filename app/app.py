@@ -3,17 +3,14 @@
 Ne jamais déployer ce code tel quel. Votre mission : le rendre conforme.
 Documentation interactive : http://localhost:5000/docs
 """
-import base64
 import hashlib
 import html
-import logging
 import os
 import random
 import sqlite3
 import subprocess
-import traceback
 from urllib.parse import urlparse
-
+import logging
 from argon2 import PasswordHasher
 from argon2.exceptions import VerificationError
 from fastapi import HTTPException
@@ -34,7 +31,7 @@ ph = PasswordHasher()
 logging.basicConfig(level=logging.DEBUG)
 log = logging.getLogger("minishop")
 SECRET_KEY = os.environ["SECRET_KEY"]
-app = FastAPI(title="MiniShop", debug=True)
+app = FastAPI(title="MiniShop", debug=False)
 app.add_middleware(SessionMiddleware, secret_key=SECRET_KEY, https_only=True, same_site="lax")
 
 ROLE_PERMS = {
@@ -120,7 +117,8 @@ def init_db():
 
 @app.exception_handler(Exception)
 async def handle_error(request: Request, exc: Exception):
-    return HTMLResponse("<pre>" + traceback.format_exc() + "</pre>", status_code=500)
+    log.exception(f"exception has occur : {exc}")
+    return JSONResponse(status_code=500, content={"detail": "Internal server error"})
 
 
 @app.middleware("http")
