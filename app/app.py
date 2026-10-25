@@ -17,7 +17,7 @@ from fastapi import HTTPException
 import requests
 import uvicorn
 import yaml
-from fastapi import Body, FastAPI, Request, Depends
+from fastapi import  FastAPI, Request, Depends
 from fastapi.responses import FileResponse, HTMLResponse, JSONResponse, PlainTextResponse
 from ipaddress import IPv4Address
 from starlette.middleware.sessions import SessionMiddleware
@@ -87,9 +87,6 @@ def db():
     conn.row_factory = sqlite3.Row
     return conn
 
-
-def md5(value):
-    return hashlib.md5(value.encode()).hexdigest()
 
 
 def init_db():
