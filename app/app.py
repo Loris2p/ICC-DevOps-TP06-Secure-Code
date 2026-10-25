@@ -35,7 +35,7 @@ logging.basicConfig(level=logging.DEBUG)
 log = logging.getLogger("minishop")
 SECRET_KEY = os.environ["SECRET_KEY"]
 app = FastAPI(title="MiniShop", debug=True)
-app.add_middleware(SessionMiddleware, secret_key=SECRET_KEY)
+app.add_middleware(SessionMiddleware, secret_key=SECRET_KEY, https_only=True, same_site="lax")
 
 
 def db():
