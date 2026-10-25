@@ -12,6 +12,7 @@ import random
 import sqlite3
 import subprocess
 import traceback
+from urllib.parse import urlparse
 
 from fastapi import HTTPException
 import requests
@@ -24,6 +25,7 @@ from starlette.middleware.sessions import SessionMiddleware
 import ast
 from pydantic import BaseModel
 from pathlib import Path
+
 SECRET_KEY = "super-secret-key-123"
 DB_PATH = os.environ.get("DB_PATH", "shop.db")
 UPLOAD_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "uploads")
@@ -126,6 +128,7 @@ def ping(host: IPv4Address = IPv4Address("127.0.0.1")):
     except subprocess.TimeoutExpired:
         return PlainTextResponse("Timeout expired", status_code=504)
 
+
 @app.get("/hello")
 def hello(name: str = ""):
     return HTMLResponse(html.escape(f"<h1>Bonjour {name}</h1>"))
@@ -133,9 +136,9 @@ def hello(name: str = ""):
 
 @app.get("/files/{name:path}")
 def get_file(name: str):
-    base_path=Path(UPLOAD_DIR).resolve()
-    target_path=(base_path/name).resolve()
-    is_relative_to=target_path.is_relative_to(base_path)
+    base_path = Path(UPLOAD_DIR).resolve()
+    target_path = (base_path / name).resolve()
+    is_relative_to = target_path.is_relative_to(base_path)
     if not is_relative_to:
         raise HTTPException(status_code=403, detail="Not a relative path")
     if not target_path.is_file():
@@ -148,7 +151,7 @@ def get_file(name: str):
 def calc(data: dict = Body(...)):
     try:
         calc_result = ast.literal_eval(data.get("expr", ""))
-        return {"result":str(calc_result)}
+        return {"result": str(calc_result)}
     except (ValueError, SyntaxError):
         raise HTTPException(status_code=400, detail='Invalid expression')
 
@@ -161,9 +164,12 @@ async def import_yaml(request: Request):
     except yaml.YAMLError as exc:
         raise HTTPException(status_code=400, detail=str(exc))
 
-class Profile (BaseModel) :
-    name : str
-    bio : str
+
+class Profile(BaseModel):
+    name: str
+    bio: str
+
+
 @app.post("/import-profile")
 async def import_profile(profile: Profile):
     return {"profile": profile.dict()}
@@ -171,7 +177,10 @@ async def import_profile(profile: Profile):
 
 @app.get("/fetch")
 def fetch(url: str):
-    r = requests.get(url, verify=False)
+    u = urlparse(url)
+    if u.scheme != "https":
+        raise HTTPException(status_code=400)
+    r = requests.get(url, verify=True, timeout=5, allow_redirects=False)
     return PlainTextResponse(r.text[:500])
 
 

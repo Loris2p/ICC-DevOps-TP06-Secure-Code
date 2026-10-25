@@ -28,8 +28,8 @@ Les tests utilisent `/ping` (Linux/macOS/WSL recommandé). Initialisez un dépô
 
 ### Partie 2 – Fichiers, XSS, SSRF (3 pts)
 ~~5. `/files/{name}` : confiner au dossier `uploads/` (`resolve()` + `is_relative_to`).~~
-6. `/hello` : utiliser `Jinja2Templates` (échappement automatique) ou `html.escape`.
-7. `/fetch` : liste blanche d'hôtes, https uniquement, `timeout`, `verify=True`, pas de redirections.
+~~6. `/hello` : utiliser `Jinja2Templates` (échappement automatique) ou `html.escape`.~~
+~~7. `/fetch` : liste blanche d'hôtes, https uniquement, `timeout`, `verify=True`, pas de redirections.~~
 
 ### Partie 3 – Authentification, crypto, secrets (4 pts)
 8. Mots de passe hachés avec argon2id (`argon2-cffi`) ou bcrypt, y compris pour les comptes de `init_db()`.
