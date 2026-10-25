@@ -31,7 +31,13 @@ ph = PasswordHasher()
 logging.basicConfig(level=logging.DEBUG)
 log = logging.getLogger("minishop")
 SECRET_KEY = os.environ["SECRET_KEY"]
-app = FastAPI(title="MiniShop", debug=False)
+is_production = os.getenv("IS_PRODUCTION", "").lower() in ("true", "1")
+app = FastAPI(title="MiniShop",
+              debug=False,
+              docs_url=None if is_production else "/docs",
+              redoc_url=None if is_production else "/redoc",
+              openapi_url=None if is_production else "/openapi.json",
+              )
 app.add_middleware(SessionMiddleware, secret_key=SECRET_KEY, https_only=True, same_site="lax")
 
 ROLE_PERMS = {
@@ -257,4 +263,5 @@ def boom():
 
 if __name__ == "__main__":
     init_db()
-    uvicorn.run("app:app", host="0.0.0.0", port=5000, reload=True)
+
+    uvicorn.run("app:app", host="127.0.0.1", port=5000, reload=False)
