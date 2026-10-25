@@ -18,6 +18,7 @@ import requests
 import uvicorn
 import yaml
 from fastapi import  FastAPI, Request, Depends
+from fastapi.exceptions import RequestValidationError
 from fastapi.responses import FileResponse, HTMLResponse, JSONResponse, PlainTextResponse
 from ipaddress import IPv4Address
 from starlette.middleware.sessions import SessionMiddleware
@@ -49,6 +50,10 @@ ROLE_PERMS = {
     "user": {"invoice:read"},
     "admin": {"invoice:read", "user:read", "user:delete"},
 }
+
+@app.exception_handler(RequestValidationError)
+async def validation_exception_handler(request: Request, exc: RequestValidationError):
+    return JSONResponse(status_code=422, content={"detail": "Validation error"})
 
 class Profile(BaseModel):
     name: str

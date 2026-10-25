@@ -1,10 +1,10 @@
 fastapi
-starlette
-pydantic<2
+starlette>1.3.1
+pydantic
 uvicorn
 itsdangerous
 httpx
 requests
 PyYAML
 argon2-cffi
-slowapi17. Mettre à jour les dépendances vulnérables (`pip-audit` doit sortir propre) ; produire `requirements.in` + `requirements.txt` verrouillé avec hashes (`pip-compile --generate-hashes`).~~
+slowapi
