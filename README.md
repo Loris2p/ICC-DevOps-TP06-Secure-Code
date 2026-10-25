@@ -32,7 +32,7 @@ Les tests utilisent `/ping` (Linux/macOS/WSL recommandé). Initialisez un dépô
 ~~7. `/fetch` : liste blanche d'hôtes, https uniquement, `timeout`, `verify=True`, pas de redirections.~~
 
 ### Partie 3 – Authentification, crypto, secrets (4 pts)
-8. Mots de passe hachés avec argon2id (`argon2-cffi`) ou bcrypt, y compris pour les comptes de `init_db()`.
+~~8. Mots de passe hachés avec argon2id (`argon2-cffi`) ou bcrypt, y compris pour les comptes de `init_db()`.~~
 9. `SECRET_KEY` lue depuis la variable d'environnement du même nom (sans valeur par défaut), conservée en constante du module `app.py` ; supprimer la clé AWS en dur ; fournir un `.env.example` et un `.gitignore` qui exclut `.env`.
 10. Jeton de session généré avec `secrets` (ou supprimé si inutile) ; cookie de session `Secure`, `HttpOnly`, `SameSite` (`SessionMiddleware(https_only=True, same_site="lax")`).
 11. Ne plus logger les mots de passe.
