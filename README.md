@@ -46,7 +46,7 @@ Les tests utilisent `/ping` (Linux/macOS/WSL recommandé). Initialisez un dépô
 ~~16. Bonus : limitation de débit sur `/login` (slowapi), modèles pydantic stricts pour toutes les entrées.~~
 
 ### Partie 5 – Dépendances et Dockerfile (2 pts)
-17. Mettre à jour les dépendances vulnérables (`pip-audit` doit sortir propre) ; produire `requirements.in` + `requirements.txt` verrouillé avec hashes (`pip-compile --generate-hashes`).
+~~17. Mettre à jour les dépendances vulnérables (`pip-audit` doit sortir propre) ; produire `requirements.in` + `requirements.txt` verrouillé avec hashes (`pip-compile --generate-hashes`).~~
 18. Dockerfile : image de base épinglée (`python:3.12-slim`), utilisateur non-root (`USER`), `pip install --require-hashes --no-cache-dir`, `.dockerignore`, commande `uvicorn app:app --host 0.0.0.0 --port 5000` sans `--reload`.
 
 ### Partie 6 – CI/CD de sécurité (3 pts)
