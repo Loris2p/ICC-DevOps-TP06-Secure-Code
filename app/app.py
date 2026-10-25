@@ -50,7 +50,14 @@ ROLE_PERMS = {
     "admin": {"invoice:read", "user:read", "user:delete"},
 }
 
-
+class Profile(BaseModel):
+    name: str
+    bio: str
+class LoginRequest(BaseModel):
+    username: str
+    password: str
+class CalcRequest(BaseModel):
+    expr: str
 def current_user(request: Request):
     user_id = request.session.get("user_id")
     if not user_id:
@@ -148,9 +155,9 @@ def health():
 
 
 @app.post("/login")
-@limiter.limit("5/minute")
-def login(request: Request, data: dict = Body(...)):
-    username, password = data["username"], data["password"]
+@limiter.limit("30/minute")
+def login(request: Request, data: LoginRequest):
+    username, password = data.username, data.password
     log.info(f"login attempt user={username}")
     sql = f"SELECT id, username, password FROM users WHERE username = ?"
     row = db().execute(sql, (username,)).fetchone()
@@ -201,9 +208,9 @@ def get_file(name: str):
 
 
 @app.post("/calc")
-def calc(data: dict = Body(...)):
+def calc(data: CalcRequest):
     try:
-        calc_result = ast.literal_eval(data.get("expr", ""))
+        calc_result = ast.literal_eval(data.expr)
         return {"result": str(calc_result)}
     except (ValueError, SyntaxError):
         raise HTTPException(status_code=400, detail='Invalid expression')
@@ -218,9 +225,6 @@ async def import_yaml(request: Request):
         raise HTTPException(status_code=400, detail=str(exc))
 
 
-class Profile(BaseModel):
-    name: str
-    bio: str
 
 
 @app.post("/import-profile")

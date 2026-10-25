@@ -43,7 +43,7 @@ Les tests utilisent `/ping` (Linux/macOS/WSL recommandé). Initialisez un dépô
 ~~13. En-têtes de sécurité : CSP, `X-Content-Type-Options: nosniff`, HSTS, `X-Frame-Options` (middleware HTTP `@app.middleware("http")`).~~
 ~~14. Gestionnaire d'erreurs générique : plus de stack trace ; détail uniquement dans les logs.~~
 ~~15. `FastAPI(debug=False)`, pas de `reload=True`, pas d'écoute sur `0.0.0.0` hors conteneur ; désactiver `/docs` et `/openapi.json` en production.~~
-16. Bonus : limitation de débit sur `/login` (slowapi), modèles pydantic stricts pour toutes les entrées.
+~~16. Bonus : limitation de débit sur `/login` (slowapi), modèles pydantic stricts pour toutes les entrées.~~
 
 ### Partie 5 – Dépendances et Dockerfile (2 pts)
 17. Mettre à jour les dépendances vulnérables (`pip-audit` doit sortir propre) ; produire `requirements.in` + `requirements.txt` verrouillé avec hashes (`pip-compile --generate-hashes`).
