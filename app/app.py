@@ -15,7 +15,7 @@ import traceback
 from urllib.parse import urlparse
 
 from argon2 import PasswordHasher
-from argon2.exceptions import VerifyMismatchError, VerificationError
+from argon2.exceptions import VerificationError
 from fastapi import HTTPException
 import requests
 import uvicorn
@@ -28,14 +28,12 @@ import ast
 from pydantic import BaseModel
 from pathlib import Path
 
-SECRET_KEY = "super-secret-key-123"
 DB_PATH = os.environ.get("DB_PATH", "shop.db")
 UPLOAD_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "uploads")
-AWS_KEY = "AKIAIOSFODNN7EXAMPLE"
 ph = PasswordHasher()
 logging.basicConfig(level=logging.DEBUG)
 log = logging.getLogger("minishop")
-
+SECRET_KEY = os.environ["SECRET_KEY"]
 app = FastAPI(title="MiniShop", debug=True)
 app.add_middleware(SessionMiddleware, secret_key=SECRET_KEY)
 
