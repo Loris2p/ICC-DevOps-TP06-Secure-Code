@@ -93,6 +93,15 @@ def init_db():
 async def handle_error(request: Request, exc: Exception):
     return HTMLResponse("<pre>" + traceback.format_exc() + "</pre>", status_code=500)
 
+@app.middleware("http")
+async def add_security_headers(request: Request, call_next):
+    response = await call_next(request)
+    response.headers["Content-Security-Policy"] = "default-src 'self'"
+    response.headers["X-Content-Type-Options"] = "nosniff"
+    response.headers["X-Frame-Options"] = "DENY"
+    response.headers["Strict-Transport-Security"] = "max-age=31536000; includeSubDomains"
+    return response
+
 
 @app.get("/health")
 def health():
@@ -192,7 +201,8 @@ def fetch(url: str):
 def invoice(invoice_id: int, request: Request):
     if "user_id" not in request.session:
         return JSONResponse({"error": "login required"}, status_code=401)
-    row = db().execute("SELECT * FROM invoices WHERE id = ? AND owner_id= ?", (invoice_id,request.session["user_id"])).fetchone()
+    row = db().execute("SELECT * FROM invoices WHERE id = ? AND owner_id= ?",
+                       (invoice_id, request.session["user_id"])).fetchone()
     if not row:
         return JSONResponse({"error": "not found"}, status_code=404)
     return dict(row)
