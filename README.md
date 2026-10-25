@@ -39,7 +39,7 @@ Les tests utilisent `/ping` (Linux/macOS/WSL recommandé). Initialisez un dépô
 
 ### Partie 4 – Accès, en-têtes, erreurs, configuration (3 pts)
 ~~12. `/invoices/{id}` : vérifier que la facture appartient à l'utilisateur connecté (404 sinon), idéalement via une dépendance `Depends(current_user)`.~~
-12b. **RBAC** : `GET /admin/users` et `DELETE /users/{id}` sont réservés au rôle admin (403 pour un simple utilisateur). Définir les rôles et leurs permissions dans un seul endroit (ex. dépendance `require("user:delete")`), refus par défaut.
+~~12b. **RBAC** : `GET /admin/users` et `DELETE /users/{id}` sont réservés au rôle admin (403 pour un simple utilisateur). Définir les rôles et leurs permissions dans un seul endroit (ex. dépendance `require("user:delete")`), refus par défaut.~~
 ~~13. En-têtes de sécurité : CSP, `X-Content-Type-Options: nosniff`, HSTS, `X-Frame-Options` (middleware HTTP `@app.middleware("http")`).~~
 14. Gestionnaire d'erreurs générique : plus de stack trace ; détail uniquement dans les logs.
 15. `FastAPI(debug=False)`, pas de `reload=True`, pas d'écoute sur `0.0.0.0` hors conteneur ; désactiver `/docs` et `/openapi.json` en production.
