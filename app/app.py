@@ -24,6 +24,9 @@ from starlette.middleware.sessions import SessionMiddleware
 import ast
 from pydantic import BaseModel
 from pathlib import Path
+from slowapi import Limiter, _rate_limit_exceeded_handler
+from slowapi.util import get_remote_address
+from slowapi.errors import RateLimitExceeded
 
 DB_PATH = os.environ.get("DB_PATH", "shop.db")
 UPLOAD_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "uploads")
@@ -39,7 +42,9 @@ app = FastAPI(title="MiniShop",
               openapi_url=None if is_production else "/openapi.json",
               )
 app.add_middleware(SessionMiddleware, secret_key=SECRET_KEY, https_only=True, same_site="lax")
-
+limiter = Limiter(key_func=get_remote_address)
+app.state.limiter = limiter
+app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
 ROLE_PERMS = {
     "user": {"invoice:read"},
     "admin": {"invoice:read", "user:read", "user:delete"},
@@ -143,6 +148,7 @@ def health():
 
 
 @app.post("/login")
+@limiter.limit("5/minute")
 def login(request: Request, data: dict = Body(...)):
     username, password = data["username"], data["password"]
     log.info(f"login attempt user={username}")
